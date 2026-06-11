@@ -412,7 +412,7 @@ export default function App() {
       {/* HERO */}
       <section className="hero">
         <div className="hero-img-wrap">
-          <img src="https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=1000&q=85" alt="Hereford cows in Irish countryside" />
+          <img src="https://mountainamericajerky.com/wp-content/uploads/2024/05/grass-fed-cows.webp" alt="Grass-fed cows on open pasture" />
           <div className="hero-img-fade" />
         </div>
         <div className="hero-content">
