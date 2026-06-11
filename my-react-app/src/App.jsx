@@ -224,25 +224,134 @@ const STATS = [
   { num: "80+", label: "Active buyers & organisations" },
 ];
 
+const styles = `
+  * { box-sizing: border-box; }
+  .mwbl-wrap { font-family: 'Segoe UI', system-ui, sans-serif; color: #1a2e1a; margin: 0; padding: 0; }
+
+  /* NAV */
+  .nav { position: sticky; top: 0; z-index: 100; background: white; border-bottom: 1px solid #e8f0e8; display: flex; align-items: center; justify-content: space-between; padding: 0 20px; height: 64px; box-shadow: 0 1px 6px rgba(0,0,0,0.07); }
+  .nav-links { display: flex; align-items: center; gap: 4px; }
+  .nav-auth { display: flex; gap: 10px; align-items: center; }
+  .hamburger { display: none; background: none; border: none; cursor: pointer; padding: 6px; }
+  .mobile-menu { display: none; background: white; border-bottom: 1px solid #e8f0e8; padding: 12px 20px 20px; }
+  .mobile-menu.open { display: block; }
+  .mobile-menu a { display: block; padding: 10px 0; font-size: 15px; color: #2d4a2d; text-decoration: none; border-bottom: 1px solid #f0f7f0; }
+  .mobile-menu-auth { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+
+  /* HERO */
+  .hero { position: relative; min-height: 480px; background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f1 50%, #c8e6c9 100%); display: flex; align-items: center; overflow: hidden; }
+  .hero-img-wrap { position: absolute; right: 0; top: 0; bottom: 0; width: 55%; overflow: hidden; }
+  .hero-img-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center; }
+  .hero-img-fade { position: absolute; inset: 0; background: linear-gradient(to right, #e8f5e9 0%, transparent 45%); }
+  .hero-content { position: relative; z-index: 2; padding: 64px 60px; max-width: 580px; }
+  .hero-divider { width: 48px; height: 3px; background: #52b788; margin-bottom: 20px; border-radius: 2px; }
+  .hero-btns { display: flex; gap: 14px; flex-wrap: wrap; }
+
+  /* SECTIONS */
+  .section-white { background: white; padding: 72px 60px; }
+  .section-tinted { background: #f6fbf6; padding: 72px 60px; }
+  .section-header { text-align: center; margin-bottom: 52px; }
+  .section-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 2px; color: #52b788; text-transform: uppercase; margin-bottom: 8px; }
+
+  /* HOW IT WORKS */
+  .steps-row { display: flex; gap: 0; align-items: flex-start; max-width: 1100px; margin: 0 auto; flex-wrap: wrap; }
+  .step { flex: 1 1 200px; display: flex; flex-direction: column; align-items: center; position: relative; padding: 0 16px; }
+  .step-connector { position: absolute; top: 38px; left: calc(50% + 40px); width: calc(100% - 80px); border-top: 2px dashed #b7ddb7; z-index: 0; }
+  .step-circle { width: 76px; height: 76px; border-radius: 50%; background: #f0f7f0; border: 2.5px solid #c8e6c9; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; position: relative; z-index: 1; }
+  .step-num { position: absolute; top: -8px; left: -8px; width: 26px; height: 26px; border-radius: 50%; background: #2d6a4f; color: white; font-size: 11px; font-weight: 800; display: flex; align-items: center; justify-content: center; }
+
+  /* TOOLS */
+  .tools-grid { display: flex; flex-wrap: wrap; gap: 24px; max-width: 1100px; margin: 0 auto; justify-content: center; }
+  .tool-card { flex: 1 1 160px; max-width: 190px; background: white; border-radius: 12px; padding: 28px 20px 24px; border: 1.5px solid #e0ede0; display: flex; flex-direction: column; align-items: center; text-align: center; box-shadow: 0 2px 8px rgba(45,106,79,.05); transition: box-shadow .2s, border-color .2s; cursor: default; }
+  .tool-card:hover { box-shadow: 0 6px 24px rgba(45,106,79,.13); border-color: #52b788; }
+  .tool-icon-wrap { width: 60px; height: 60px; border-radius: 14px; background: #f0f7f0; display: flex; align-items: center; justify-content: center; margin-bottom: 14px; }
+
+  /* WHO IT'S FOR */
+  .who-grid { display: flex; flex-wrap: wrap; gap: 18px; max-width: 1100px; margin: 0 auto; justify-content: center; }
+  .who-card { flex: 1 1 155px; max-width: 175px; border-radius: 14px; overflow: hidden; box-shadow: 0 2px 10px rgba(0,0,0,.08); transition: transform .2s, box-shadow .2s; cursor: default; }
+  .who-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,.13); }
+  .who-img-wrap { position: relative; height: 110px; }
+  .who-img-wrap img { width: 100%; height: 100%; object-fit: cover; }
+  .who-icon-badge { position: absolute; bottom: 10px; left: 10px; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+
+  /* STATS */
+  .stats-bar { background: #1b4332; padding: 0 60px; }
+  .stats-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: stretch; flex-wrap: wrap; }
+  .stats-intro { flex: 1 1 220px; padding: 40px 32px 40px 0; border-right: 1px solid rgba(255,255,255,.15); display: flex; flex-direction: column; justify-content: center; }
+  .stat-item { flex: 1 1 120px; padding: 40px 28px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+  .stats-trusted { flex: 1 1 160px; padding: 40px 0 40px 28px; border-left: 1px solid rgba(255,255,255,.12); display: flex; flex-direction: column; justify-content: center; }
+  .badge-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .cert-badge { background: white; border-radius: 6px; padding: 6px 12px; font-size: 11px; font-weight: 700; color: #1b4332; }
+
+  /* FOOTER */
+  .footer { background: #152d1e; padding: 0 60px; }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 20px 0; flex-wrap: wrap; gap: 16px; }
+
+  /* BUTTONS */
+  .btn-primary { background: #1b4332; color: white; border: none; padding: 14px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 10px; min-width: 180px; }
+  .btn-outline { background: white; color: #1b4332; border: 2px solid #1b4332; padding: 14px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 10px; }
+  .btn-login { border: 1.5px solid #cde0cd; background: white; color: #1b4332; padding: 7px 18px; border-radius: 7px; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+  .btn-join-nav { background: #1b4332; color: white; border: none; padding: 8px 20px; border-radius: 7px; font-size: 13px; font-weight: 700; cursor: pointer; }
+  .btn-join-footer { background: #2d6a4f; color: white; border: none; padding: 10px 24px; border-radius: 7px; font-size: 13px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+
+  /* MOBILE */
+  @media (max-width: 768px) {
+    .nav-links, .nav-auth { display: none; }
+    .hamburger { display: flex; flex-direction: column; gap: 5px; }
+    .hamburger span { display: block; width: 22px; height: 2px; background: #1b4332; border-radius: 2px; }
+
+    .hero { min-height: auto; flex-direction: column; align-items: stretch; }
+    .hero-img-wrap { position: relative; width: 100%; height: 220px; }
+    .hero-img-fade { background: linear-gradient(to bottom, transparent 60%, #e8f5e9 100%); }
+    .hero-content { padding: 28px 20px 40px; max-width: 100%; }
+    .hero-btns { flex-direction: column; }
+    .btn-primary, .btn-outline { min-width: 0; width: 100%; justify-content: flex-start; }
+
+    .section-white { padding: 48px 20px; }
+    .section-tinted { padding: 48px 20px; }
+
+    .steps-row { flex-direction: column; align-items: stretch; gap: 28px; }
+    .step { flex: none; flex-direction: row; align-items: flex-start; padding: 0; gap: 16px; }
+    .step-connector { display: none; }
+    .step-circle { flex-shrink: 0; width: 64px; height: 64px; margin-bottom: 0; }
+    .step-text { flex: 1; }
+
+    .tools-grid { gap: 14px; }
+    .tool-card { flex: 1 1 140px; max-width: calc(50% - 7px); padding: 20px 14px; }
+
+    .who-grid { gap: 12px; }
+    .who-card { flex: 1 1 140px; max-width: calc(50% - 6px); }
+
+    .stats-bar { padding: 0 20px; }
+    .stats-inner { flex-direction: column; }
+    .stats-intro { border-right: none; border-bottom: 1px solid rgba(255,255,255,.15); padding: 28px 0; }
+    .stat-item { flex: none; padding: 16px 0; border-bottom: 1px solid rgba(255,255,255,.1); flex-direction: row; justify-content: space-between; align-items: center; text-align: left; width: 100%; }
+    .stats-trusted { border-left: none; border-top: 1px solid rgba(255,255,255,.15); padding: 24px 0; }
+
+    .footer { padding: 0 20px; }
+    .footer-inner { flex-direction: column; align-items: flex-start; padding: 24px 0; }
+
+    .nav { padding: 0 16px; }
+  }
+
+  @media (max-width: 480px) {
+    .tool-card { flex: 1 1 100%; max-width: 100%; }
+    .who-card { flex: 1 1 140px; max-width: calc(50% - 6px); }
+  }
+`;
+
 export default function App() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
-    <div style={{ fontFamily: "'Segoe UI', system-ui, sans-serif", color: "#1a2e1a", margin: 0, padding: 0 }}>
+    <div className="mwbl-wrap">
+      <style>{styles}</style>
+
       {/* NAVBAR */}
-      <nav style={{
-        position: "sticky", top: 0, zIndex: 100,
-        background: "white", borderBottom: "1px solid #e8f0e8",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-        padding: "0 32px", height: 64,
-        boxShadow: "0 1px 6px rgba(0,0,0,0.07)"
-      }}>
+      <nav className="nav">
         {/* Logo */}
         <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{
-            width: 40, height: 40, borderRadius: 8,
-            background: "#1b4332", display: "flex", alignItems: "center", justifyContent: "center"
-          }}>
+          <div style={{ width: 40, height: 40, borderRadius: 8, background: "#1b4332", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <svg viewBox="0 0 32 32" fill="none" width="26" height="26">
               <path d="M8 18c0-4 3-8 8-10 5 2 8 6 8 10a8 8 0 0 1-16 0Z" stroke="white" strokeWidth="1.8" />
               <circle cx="16" cy="10" r="3" stroke="white" strokeWidth="1.8" />
@@ -256,15 +365,10 @@ export default function App() {
           </div>
         </div>
 
-        {/* Nav links */}
-        <div style={{ display: "flex", alignItems: "center", gap: 4 }}>
+        {/* Desktop nav links */}
+        <div className="nav-links">
           {NAV_LINKS.map((l) => (
-            <a key={l.label} href={l.href} style={{
-              padding: "6px 12px", fontSize: 14, fontWeight: 500,
-              color: "#2d4a2d", textDecoration: "none", borderRadius: 6,
-              display: "flex", alignItems: "center", gap: 3,
-              transition: "background .15s"
-            }}
+            <a key={l.label} href={l.href} style={{ padding: "6px 12px", fontSize: 14, fontWeight: 500, color: "#2d4a2d", textDecoration: "none", borderRadius: 6, display: "flex", alignItems: "center", gap: 3 }}
               onMouseEnter={e => e.currentTarget.style.background = "#f0f7f0"}
               onMouseLeave={e => e.currentTarget.style.background = "transparent"}
             >
@@ -278,75 +382,50 @@ export default function App() {
           ))}
         </div>
 
-        {/* Auth buttons */}
-        <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-          <button style={{
-            border: "1.5px solid #cde0cd", background: "white",
-            color: "#1b4332", padding: "7px 18px", borderRadius: 7,
-            fontSize: 13, fontWeight: 600, cursor: "pointer",
-            display: "flex", alignItems: "center", gap: 6
-          }}>
+        {/* Desktop auth */}
+        <div className="nav-auth">
+          <button className="btn-login">
             <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
               <circle cx="8" cy="6" r="3.5" stroke="#1b4332" strokeWidth="1.5" />
               <path d="M2 14c0-3.314 2.686-6 6-6s6 2.686 6 6" stroke="#1b4332" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
             Log In
           </button>
-          <button style={{
-            background: "#1b4332", color: "white",
-            border: "none", padding: "8px 20px", borderRadius: 7,
-            fontSize: 13, fontWeight: 700, cursor: "pointer",
-            letterSpacing: 0.2
-          }}>
-            Join the Network
-          </button>
+          <button className="btn-join-nav">Join the Network</button>
         </div>
+
+        {/* Hamburger */}
+        <button className="hamburger" onClick={() => setMobileOpen(o => !o)} aria-label="Toggle menu">
+          <span /><span /><span />
+        </button>
       </nav>
 
-      {/* HERO */}
-      <section style={{
-        position: "relative", minHeight: 520,
-        background: "linear-gradient(120deg, #e8f5e9 0%, #f1f8f1 40%, #c8e6c9 100%)",
-        display: "flex", alignItems: "center",
-        overflow: "hidden"
-      }}>
-        {/* Cow image bg */}
-        <div style={{
-          position: "absolute", right: 0, top: 0, bottom: 0,
-          width: "55%", overflow: "hidden"
-        }}>
-          <img
-            src="https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=1000&q=85"
-            alt="Hereford cows in Irish countryside"
-            style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }}
-          />
-          <div style={{
-            position: "absolute", inset: 0,
-            background: "linear-gradient(to right, #e8f5e9 0%, transparent 40%)"
-          }} />
+      {/* MOBILE MENU */}
+      <div className={`mobile-menu${mobileOpen ? " open" : ""}`}>
+        {NAV_LINKS.map(l => <a key={l.label} href={l.href}>{l.label}</a>)}
+        <div className="mobile-menu-auth">
+          <button className="btn-login" style={{ width: "100%", justifyContent: "center" }}>Log In</button>
+          <button className="btn-join-nav" style={{ padding: "10px 20px" }}>Join the Network</button>
         </div>
+      </div>
 
-        {/* Hero content */}
-        <div style={{ position: "relative", zIndex: 2, padding: "64px 64px 64px 60px", maxWidth: 580 }}>
-          <h1 style={{
-            fontSize: "clamp(2rem, 4vw, 3rem)", fontWeight: 900,
-            lineHeight: 1.15, margin: "0 0 20px",
-            color: "#1a2e1a"
-          }}>
+      {/* HERO */}
+      <section className="hero">
+        <div className="hero-img-wrap">
+          <img src="https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=1000&q=85" alt="Hereford cows in Irish countryside" />
+          <div className="hero-img-fade" />
+        </div>
+        <div className="hero-content">
+          <h1 style={{ fontSize: "clamp(1.7rem, 5vw, 3rem)", fontWeight: 900, lineHeight: 1.15, margin: "0 0 20px", color: "#1a2e1a" }}>
             Connecting organic beef producers, processors and buyers{" "}
             <span style={{ color: "#2d6a4f" }}>across the Mid-West.</span>
           </h1>
-          <div style={{ width: 48, height: 3, background: "#52b788", marginBottom: 20, borderRadius: 2 }} />
+          <div className="hero-divider" />
           <p style={{ fontSize: 16, color: "#3a5a3a", lineHeight: 1.65, margin: "0 0 36px", maxWidth: 400 }}>
             Mid-West Beef Link is a farmer-owned platform that coordinates supply, logistics and demand to keep more value in our region.
           </p>
-          <div style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-            <button style={{
-              background: "#1b4332", color: "white",
-              border: "none", padding: "14px 24px", borderRadius: 8,
-              fontSize: 14, fontWeight: 700, cursor: "pointer",
-              display: "flex", alignItems: "center", gap: 10, minWidth: 180
-            }}>
+          <div className="hero-btns">
+            <button className="btn-primary">
               <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
                 <path d="M10 2C7.791 2 6 4.5 6 8a4 4 0 0 0 8 0C14 4.5 12.209 2 10 2Z" stroke="white" strokeWidth="1.5" />
                 <path d="M4 18c0-3.5 2.686-6 6-6s6 2.5 6 6" stroke="white" strokeWidth="1.5" strokeLinecap="round" />
@@ -356,12 +435,7 @@ export default function App() {
                 <div style={{ fontSize: 11, fontWeight: 400, opacity: 0.8 }}>List your supply</div>
               </div>
             </button>
-            <button style={{
-              background: "white", color: "#1b4332",
-              border: "2px solid #1b4332", padding: "14px 24px", borderRadius: 8,
-              fontSize: 14, fontWeight: 700, cursor: "pointer",
-              display: "flex", alignItems: "center", gap: 10, minWidth: 220
-            }}>
+            <button className="btn-outline">
               <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
                 <path d="M3 6h14l-1 9H4L3 6Z" stroke="#1b4332" strokeWidth="1.5" strokeLinejoin="round" />
                 <circle cx="8" cy="17" r="1.5" stroke="#1b4332" strokeWidth="1.5" />
@@ -378,75 +452,41 @@ export default function App() {
       </section>
 
       {/* HOW IT WORKS */}
-      <section style={{ background: "white", padding: "72px 60px" }}>
-        <div style={{ textAlign: "center", marginBottom: 52 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#52b788", textTransform: "uppercase", marginBottom: 8 }}>PROCESS</div>
+      <section className="section-white">
+        <div className="section-header">
+          <div className="section-eyebrow">PROCESS</div>
           <h2 style={{ fontSize: 28, fontWeight: 800, color: "#1a2e1a", margin: "0 0 10px" }}>HOW IT WORKS</h2>
           <p style={{ fontSize: 15, color: "#4a6a4a", maxWidth: 480, margin: "0 auto" }}>
             A simple, transparent network that brings the whole supply chain together.
           </p>
         </div>
-        <div style={{ display: "flex", gap: 0, alignItems: "flex-start", maxWidth: 1100, margin: "0 auto", flexWrap: "wrap" }}>
+        <div className="steps-row">
           {HOW_IT_WORKS.map((step, i) => (
-            <div key={step.num} style={{ flex: "1 1 200px", display: "flex", flexDirection: "column", alignItems: "center", position: "relative", padding: "0 16px" }}>
-              {/* Connector line */}
-              {i < HOW_IT_WORKS.length - 1 && (
-                <div style={{
-                  position: "absolute", top: 38, left: "calc(50% + 40px)",
-                  width: "calc(100% - 80px)", borderTop: "2px dashed #b7ddb7", zIndex: 0
-                }} />
-              )}
-              <div style={{
-                width: 76, height: 76, borderRadius: "50%",
-                background: "#f0f7f0", border: "2.5px solid #c8e6c9",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                marginBottom: 16, position: "relative", zIndex: 1
-              }}>
-                <div style={{
-                  position: "absolute", top: -8, left: -8,
-                  width: 26, height: 26, borderRadius: "50%",
-                  background: "#2d6a4f", color: "white",
-                  fontSize: 11, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center"
-                }}>
-                  {step.num}
-                </div>
+            <div key={step.num} className="step">
+              {i < HOW_IT_WORKS.length - 1 && <div className="step-connector" />}
+              <div className="step-circle">
+                <div className="step-num">{step.num}</div>
                 {step.icon}
               </div>
-              <h3 style={{ fontSize: 15, fontWeight: 700, color: "#1a2e1a", textAlign: "center", marginBottom: 8 }}>{step.title}</h3>
-              <p style={{ fontSize: 13, color: "#5a7a5a", textAlign: "center", lineHeight: 1.55, margin: 0 }}>{step.desc}</p>
+              <div className="step-text">
+                <h3 style={{ fontSize: 15, fontWeight: 700, color: "#1a2e1a", textAlign: "left", marginBottom: 8, marginTop: 4 }}>{step.title}</h3>
+                <p style={{ fontSize: 13, color: "#5a7a5a", textAlign: "left", lineHeight: 1.55, margin: 0 }}>{step.desc}</p>
+              </div>
             </div>
           ))}
         </div>
       </section>
 
       {/* POWERFUL TOOLS */}
-      <section style={{ background: "#f6fbf6", padding: "72px 60px" }}>
-        <div style={{ textAlign: "center", marginBottom: 52 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#52b788", textTransform: "uppercase", marginBottom: 8 }}>FEATURES</div>
+      <section className="section-tinted">
+        <div className="section-header">
+          <div className="section-eyebrow">FEATURES</div>
           <h2 style={{ fontSize: 28, fontWeight: 800, color: "#1a2e1a", margin: "0 0 10px" }}>POWERFUL TOOLS FOR OUR NETWORK</h2>
         </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 24, maxWidth: 1100, margin: "0 auto", justifyContent: "center" }}>
+        <div className="tools-grid">
           {TOOLS.map((tool) => (
-            <div key={tool.title} style={{
-              flex: "1 1 160px", maxWidth: 190,
-              background: "white", borderRadius: 12,
-              padding: "28px 20px 24px",
-              border: "1.5px solid #e0ede0",
-              display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center",
-              boxShadow: "0 2px 8px rgba(45,106,79,.05)",
-              transition: "box-shadow .2s, border-color .2s",
-              cursor: "default"
-            }}
-              onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 6px 24px rgba(45,106,79,.13)"; e.currentTarget.style.borderColor = "#52b788"; }}
-              onMouseLeave={e => { e.currentTarget.style.boxShadow = "0 2px 8px rgba(45,106,79,.05)"; e.currentTarget.style.borderColor = "#e0ede0"; }}
-            >
-              <div style={{
-                width: 60, height: 60, borderRadius: 14,
-                background: "#f0f7f0", display: "flex", alignItems: "center", justifyContent: "center",
-                marginBottom: 14
-              }}>
-                {tool.icon}
-              </div>
+            <div key={tool.title} className="tool-card">
+              <div className="tool-icon-wrap">{tool.icon}</div>
               <h3 style={{ fontSize: 14, fontWeight: 700, color: "#1a2e1a", marginBottom: 8 }}>{tool.title}</h3>
               <p style={{ fontSize: 12, color: "#5a7a5a", lineHeight: 1.55, margin: 0 }}>{tool.desc}</p>
             </div>
@@ -455,30 +495,17 @@ export default function App() {
       </section>
 
       {/* WHO IT'S FOR */}
-      <section style={{ background: "white", padding: "72px 60px" }}>
-        <div style={{ textAlign: "center", marginBottom: 52 }}>
-          <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 2, color: "#52b788", textTransform: "uppercase", marginBottom: 8 }}>AUDIENCE</div>
+      <section className="section-white">
+        <div className="section-header">
+          <div className="section-eyebrow">AUDIENCE</div>
           <h2 style={{ fontSize: 28, fontWeight: 800, color: "#1a2e1a", margin: "0 0 10px" }}>WHO IT'S FOR</h2>
         </div>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 18, maxWidth: 1100, margin: "0 auto", justifyContent: "center" }}>
+        <div className="who-grid">
           {WHO_ITS_FOR.map((w) => (
-            <div key={w.title} style={{
-              flex: "1 1 155px", maxWidth: 175, borderRadius: 14,
-              overflow: "hidden", boxShadow: "0 2px 10px rgba(0,0,0,.08)",
-              transition: "transform .2s, box-shadow .2s", cursor: "default"
-            }}
-              onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 10px 28px rgba(0,0,0,.13)"; }}
-              onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 2px 10px rgba(0,0,0,.08)"; }}
-            >
-              <div style={{ position: "relative", height: 110 }}>
-                <img src={w.img} alt={w.title} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
-                <div style={{
-                  position: "absolute", bottom: 10, left: 10,
-                  width: 36, height: 36, borderRadius: "50%",
-                  background: w.color, display: "flex", alignItems: "center", justifyContent: "center"
-                }}>
-                  {w.icon}
-                </div>
+            <div key={w.title} className="who-card">
+              <div className="who-img-wrap">
+                <img src={w.img} alt={w.title} />
+                <div className="who-icon-badge" style={{ background: w.color }}>{w.icon}</div>
               </div>
               <div style={{ padding: "14px 14px 16px", background: "white" }}>
                 <h3 style={{ fontSize: 13, fontWeight: 700, color: "#1a2e1a", marginBottom: 6 }}>{w.title}</h3>
@@ -490,72 +517,35 @@ export default function App() {
       </section>
 
       {/* STATS BAR */}
-      <section style={{
-        background: "#1b4332",
-        padding: "0 60px"
-      }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto", display: "flex", alignItems: "stretch", flexWrap: "wrap" }}>
-          {/* Stronger Together */}
-          <div style={{
-            flex: "1 1 220px", padding: "40px 32px 40px 0",
-            borderRight: "1px solid rgba(255,255,255,.15)",
-            display: "flex", flexDirection: "column", justifyContent: "center"
-          }}>
+      <section className="stats-bar">
+        <div className="stats-inner">
+          <div className="stats-intro">
             <h3 style={{ fontSize: 18, fontWeight: 800, color: "white", margin: "0 0 10px" }}>STRONGER TOGETHER</h3>
             <p style={{ fontSize: 13, color: "#95d5b2", lineHeight: 1.6, margin: 0 }}>
               By working together, we build a more resilient food system and a stronger future for our region.
             </p>
           </div>
-
-          {/* Stats */}
           {STATS.map((s, i) => (
-            <div key={s.num} style={{
-              flex: "1 1 120px",
-              padding: "40px 28px",
-              borderRight: i < STATS.length - 1 ? "1px solid rgba(255,255,255,.12)" : "none",
-              display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center",
-              textAlign: "center"
-            }}>
+            <div key={s.num} className="stat-item" style={{ borderRight: i < STATS.length - 1 ? "1px solid rgba(255,255,255,.12)" : "none" }}>
               <div style={{ fontSize: 30, fontWeight: 900, color: "white", lineHeight: 1 }}>{s.num}</div>
               <div style={{ fontSize: 12, color: "#95d5b2", marginTop: 6, lineHeight: 1.4 }}>{s.label}</div>
             </div>
           ))}
-
-          {/* Trusted */}
-          <div style={{
-            flex: "1 1 160px", padding: "40px 0 40px 28px",
-            borderLeft: "1px solid rgba(255,255,255,.12)",
-            display: "flex", flexDirection: "column", justifyContent: "center"
-          }}>
+          <div className="stats-trusted">
             <div style={{ fontSize: 11, fontWeight: 700, color: "#95d5b2", letterSpacing: 1.5, marginBottom: 14 }}>TRUSTED & CERTIFIED</div>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              <div style={{
-                background: "white", borderRadius: 6, padding: "6px 12px",
-                fontSize: 11, fontWeight: 700, color: "#1b4332"
-              }}>BORD BIA<br /><span style={{ fontWeight: 400 }}>QUALITY</span></div>
-              <div style={{
-                background: "white", borderRadius: 6, padding: "6px 12px",
-                fontSize: 11, fontWeight: 700, color: "#1b4332"
-              }}>AIMS<br /><span style={{ fontWeight: 400, fontSize: 9 }}>Animal ID & Movement</span></div>
+            <div className="badge-row">
+              <div className="cert-badge">BORD BIA<br /><span style={{ fontWeight: 400 }}>QUALITY</span></div>
+              <div className="cert-badge">AIMS<br /><span style={{ fontWeight: 400, fontSize: 9 }}>Animal ID & Movement</span></div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* FOOTER CTA */}
-      <footer style={{
-        background: "#152d1e", padding: "0 60px"
-      }}>
-        <div style={{
-          maxWidth: 1100, margin: "0 auto",
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          padding: "20px 0", flexWrap: "wrap", gap: 16
-        }}>
+      {/* FOOTER */}
+      <footer className="footer">
+        <div className="footer-inner">
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <div style={{
-              width: 32, height: 32, borderRadius: 6,
-              background: "#2d6a4f", display: "flex", alignItems: "center", justifyContent: "center"
-            }}>
+            <div style={{ width: 32, height: 32, borderRadius: 6, background: "#2d6a4f", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
               <svg viewBox="0 0 28 28" fill="none" width="20" height="20">
                 <path d="M7 16c0-3.5 2.5-7 7-8.5C19 9 21.5 12.5 21.5 16a7 7 0 0 1-14 0Z" stroke="white" strokeWidth="1.8" />
                 <circle cx="14" cy="9" r="2.5" stroke="white" strokeWidth="1.8" />
@@ -566,13 +556,7 @@ export default function App() {
               <div style={{ fontSize: 11, color: "#74c69d" }}>Our mission is simple: better coordination, fairer value, stronger communities.</div>
             </div>
           </div>
-          <button style={{
-            background: "#2d6a4f", color: "white",
-            border: "none", padding: "10px 24px", borderRadius: 7,
-            fontSize: 13, fontWeight: 700, cursor: "pointer",
-            display: "flex", alignItems: "center", gap: 8,
-            whiteSpace: "nowrap"
-          }}>
+          <button className="btn-join-footer">
             Join the Network Today
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
               <path d="M3 7h8M8 4l3 3-3 3" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
